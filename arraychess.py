@@ -170,7 +170,7 @@ def startchess():
         #Black's move
         if count%2 == 0:
             print(f"\n{user2}'s Turn (Black)")
-            print(board(chesslist))
+            print(board(chesslist,"black"))
             imove, fmove = " ", " "
             while imove not in notation or fmove not in notation:
                 chesstime = chesstimeb
@@ -1023,9 +1023,15 @@ def moveinput(result, move):
     result.put(moveinput)
     return
 
-def board(clist):
+def board(clist, color="white"):
     chessboard = chararray((9,9), itemsize=2, unicode=True)
-    chessboard[:8,0] = ["8","7","6","5","4","3","2","1"]
+    if color == "white":
+        chessboard[:8,0] = ["8","7","6","5","4","3","2","1"]
+        chessboard[8,:] = ["-","a"," b"," c"," d"," e"," f"," g","h "]
+    if color == "black":
+        clist = clist[::-1]
+        chessboard[:8,0] = ["1","2","3","4","5","6","7","8"]
+        chessboard[8,:] = ["-","h"," g"," f"," e"," d"," c"," b","a "] 
     chessboard[0,1:] = clist[0:8]
     chessboard[1,1:] = clist[8:16]
     chessboard[2,1:] = clist[16:24]
@@ -1034,7 +1040,6 @@ def board(clist):
     chessboard[5,1:] = clist[40:48]
     chessboard[6,1:] = clist[48:56]
     chessboard[7,1:] = clist[56:64]
-    chessboard[8,:] = ["-","a"," b"," c"," d"," e"," f"," g","h "]
     return chessboard
 
 def login():
