@@ -6,23 +6,23 @@ import getpass as gp
 
 def startchess():
     
-    user1, user2 = login()
+    user1, user2 = login() #Fetch account names
     
     startinput = ""
-    startcommands = ["start","leaderboard","end"]
+    startcommands = ["start","leaderboard","end","1","2","3"]
     print(f"Menu: \n   1. {startcommands[0].upper()} \n   2. {startcommands[1].upper()} \n   3. {startcommands[2].upper()} \n")
     while True:
         while startinput not in startcommands:
-            startinput = input("\nInput Command: ").lower()
+            startinput = str(input("\nInput Command: ")).lower()
             print("")
             if startinput not in startcommands:
                 print("Invalid command, input again")
-        if startinput == "start":
+        if startinput == "start" or startinput == "1":
             break
-        if startinput == "leaderboard":
-            updateleaderboard(user1, 0, 0, 0, user2, 0, 0, 0)
+        if startinput == "leaderboard" or startinput == "2":
+            updateleaderboard(user1, 0, 0, 0, user2, 0, 0, 0)  #Fetch leaderboard by updating values by 0 (No change)
             startinput = ""
-        if startinput == "end":
+        if startinput == "end" or startinput == "3":
             print("\n")
             return "-END-"
     
@@ -33,22 +33,22 @@ def startchess():
                  "\u3164","\u3164","\u3164","\u3164","\u3164","\u3164","\u3164","\u3164",
                  "\u3164","\u3164","\u3164","\u3164","\u3164","\u3164","\u3164","\u3164",
                  "\u2659","\u2659","\u2659","\u2659","\u2659","\u2659","\u2659","\u2659", 
-                 "\u2656","\u2658","\u2657","\u2655","\u2654","\u2657","\u2658","\u2656"]
-    chesslistlegacy = chesslist
+                 "\u2656","\u2658","\u2657","\u2655","\u2654","\u2657","\u2658","\u2656"]  #Chess pieces in Unicode
+    chesslistlegacy = chesslist  #Back-up board in case of need for board reversion
     notation = ["a1","a2","a3","a4","a5","a6","a7","a8","b1","b2","b3","b4","b5","b6","b7","b8",
                 "c1","c2","c3","c4","c5","c6","c7","c8","d1","d2","d3","d4","d5","d6","d7","d8",
                 "e1","e2","e3","e4","e5","e6","e7","e8","f1","f2","f3","f4","f5","f6","f7","f8",
                 "g1","g2","g3","g4","g5","g6","g7","g8","h1","h2","h3","h4","h5","h6","h7","h8",
                 "shortcastlewhite","longcastlewhite","shortcastleblack","longcastleblack",
-                "draw","resign"]
+                "draw","resign"]  #Chess notation list
 
-    chessmoves = {}
+    chessmoves = {} #Dictionary to check for initial moves (for check and two-step pawn), counts how many times a tile has been played on
     for x in range(64):
         chessmoves[notation[x]] = 0
     
-    chesstimew = 600
+    chesstimew = 600  #Initial time of ten minutes per player
     chesstimeb = 600
-    count = 1    #move count
+    count = 1    #Move count
     print("Possible moves: \n", notation)
     print("\n*PS: For moves using normal chess notation (e.g. e2 to e4), please type them in the format 'move1,move2' (e.g. e2,e4).")
     time.sleep(1)
@@ -66,15 +66,15 @@ def startchess():
                 result = que.Queue()
                 timerthread = thr.Thread(target = timer, args = (remtime, chesstime, move))
                 movethread = thr.Thread(target = moveinput, args = (result, move,))
-
+                #Making thread to countdown the time while waiting for move input
                 timerthread.start()
                 movethread.start()
 
                 movethread.join()
                 timerthread.join()
-
-                moves = result.get()
-                chesstimew = remtime.get()
+                #End thread and join with main program
+                moves = result.get()  #Get move input from thread
+                chesstimew = remtime.get()  #Get remaining time from thread
                 if "," in moves:
                     moves = moves.split(",")
                     moves = tuple([moves[0], moves[1]])
@@ -179,15 +179,15 @@ def startchess():
                 result = que.Queue()
                 timerthread = thr.Thread(target = timer, args = (remtime, chesstime, move))
                 movethread = thr.Thread(target = moveinput, args = (result, move,))
-
+                #Making thread to countdown the time while waiting for move input
                 timerthread.start()
                 movethread.start()
 
                 movethread.join()
                 timerthread.join()
-
-                moves = result.get()
-                chesstimeb = remtime.get()
+                #End thread and join with main program
+                moves = result.get()  #Get move input from thread
+                chesstimeb = remtime.get()  #Get remaining time from thread
                 if "," in moves:
                     moves = moves.split(",")
                     moves = tuple([moves[0], moves[1]])
@@ -280,12 +280,12 @@ def startchess():
                 break
             count+=1 
             
-    print("\nFinal Board:\n")
+    print("\nFinal Board:\n")  #Print final state of the chess board once game is concluded
     print(board(chesslist))
     print("\n")
     return "-END-"
             
-def chessmovew(initial, final, cbt, dct):
+def chessmovew(initial, final, cbt, dct): #Move checker for white pieces, uses vectors (x,y) to find valid locations
     white = ["\u2656","\u2658","\u2657","\u2655","\u2654","\u2659"]
     chessnotation = ["a1","a2","a3","a4","a5","a6","a7","a8","b1","b2","b3","b4","b5","b6","b7","b8",
                      "c1","c2","c3","c4","c5","c6","c7","c8","d1","d2","d3","d4","d5","d6","d7","d8",
@@ -400,7 +400,7 @@ def chessmovew(initial, final, cbt, dct):
     else:
         return 0
 
-def chessmoveb(initial, final, cbt, dct):
+def chessmoveb(initial, final, cbt, dct):  #Move checker for black pieces, uses vectors (x,y) to find valid locations
     black = ["\u265C","\u265E","\u265D","\u265B","\u265A","\u265F"]
     chessnotation = ["a1","a2","a3","a4","a5","a6","a7","a8","b1","b2","b3","b4","b5","b6","b7","b8",
                      "c1","c2","c3","c4","c5","c6","c7","c8","d1","d2","d3","d4","d5","d6","d7","d8",
@@ -515,7 +515,7 @@ def chessmoveb(initial, final, cbt, dct):
     else:
         return 0
 
-def castling(initial, final, clt, dct, color):
+def castling(initial, final, clt, dct, color):  #To check if castling is valid if no pieces between rook and king, and if they haven't been previously played yet
     casclt = clt
     castlelist = ["shortcastlewhite","longcastlewhite","shortcastleblack","longcastleblack"]
     if initial not in castlelist and final not in castlelist:
@@ -545,7 +545,7 @@ def castling(initial, final, clt, dct, color):
         else:
             return casclt, 0           
     
-def promotion(clt):
+def promotion(clt):  #To check if pawn reached opposite of board, and if so change pawn w/ better piece 
     proclt = clt
     prolist = ["queen", "rook", "bishop", "knight"]
     whitepawnpro = ["a8","b8","c8","d8","e8","f8","g8","h8"]
@@ -579,7 +579,7 @@ def promotion(clt):
                 proclt[listcheck(i)] = "\u265E"
     return proclt
 
-def matecheck(clt, cbt, color):
+def matecheck(clt, cbt, color):  #To check if King is safe, checked, or checkmated; This is done by checking if current space is being attacked, and checking if spaces where the king can move to are being attacked 
     white = ["\u2656","\u2658","\u2657","\u2655","\u2654","\u2659"]
     black = ["\u265C","\u265E","\u265D","\u265B","\u265A","\u265F"]
     if color == "white":
@@ -949,7 +949,7 @@ def matecheck(clt, cbt, color):
     else:
         return kingstart, escapelist, -1
     
-def location(moveinput):
+def location(moveinput):  #Returning the vector of a chess notation from a list by scanning a copy of the board replaced by chess locations instead of chess pieces for any hits
     notationboard = ["a8","b8","c8","d8","e8","f8","g8","h8",
                      "a7","b7","c7","d7","e7","f7","g7","h7",
                      "a6","b6","c6","d6","e6","f6","g6","h6",
@@ -976,14 +976,14 @@ def location(moveinput):
             y = 0
             while y<9:
                 if notationarray[x,y] == moveinput:
-                     return (x, y)
+                     return (x, y)  #Returns vector location if input is chess location
                 y+=1
             x+=1
     if type(moveinput) is tuple:
-        return notationarray[moveinput[0], moveinput[1]]
+        return notationarray[moveinput[0], moveinput[1]]   #Returns chess location if input is vector location
     return
         
-def listcheck(move):
+def listcheck(move):    #Returns index of chess notation by scanning a copy of the main list for any hits, returns chess notation if input is an index 
     notationboard = ["a8","b8","c8","d8","e8","f8","g8","h8",
                      "a7","b7","c7","d7","e7","f7","g7","h7",
                      "a6","b6","c6","d6","e6","f6","g6","h6",
@@ -1000,7 +1000,7 @@ def listcheck(move):
         return notationboard[move]
     return
     
-def timer(remtime, chesstime, move):
+def timer(remtime, chesstime, move):  #Countdown timer that updates itself every second, with 5 seconds of grace time before countdown
     mins, secs = divmod(chesstime, 60)
     clock = "{:02d}:{:02d}".format(mins, secs)
     print(clock, end="\r")
@@ -1017,13 +1017,13 @@ def timer(remtime, chesstime, move):
     remtime.put(int(chesstime))
     return
 
-def moveinput(result, move):
+def moveinput(result, move):  #Get move input from player, if finished it stops the timer
     moveinput = input("Input move: ").lower()
     move.set()
     result.put(moveinput)
     return
 
-def board(clist, color="white"):
+def board(clist, color="white"):  #Printing the board based on the color of the current player
     chessboard = chararray((9,9), itemsize=2, unicode=True)
     if color == "white":
         chessboard[:8,0] = ["8","7","6","5","4","3","2","1"]
@@ -1042,14 +1042,14 @@ def board(clist, color="white"):
     chessboard[7,1:] = clist[56:64]
     return chessboard
 
-def login():
+def login():  #Account login
     try:
         with open("chessconsoleaccts.dat", "r") as accts:
             pass
     except FileNotFoundError:
         with open("chessconsoleaccts.dat", "w") as accts:
             pass
-
+    #Checking if file exists, if not then create new .dat file
     logcheck1 = 0
     while logcheck1 == 0:
         user1ls = input("\nPlayer 1 (White), login or signup? ").lower()
@@ -1058,39 +1058,39 @@ def login():
             while account1 == 0:
                 print("\nPlayer 1 (White), input account details: ")
                 user1 = input("Input Username (20 chars): ")
-                pass1 = gp.getpass(str("Input Password (20 chars): "))
-                if (len(user1) > 20 or user1 == "") or (len(pass1) > 20 or pass1 == ""):
+                pass1 = gp.getpass(str("Input Password (20 chars): "))   #Hiding password input
+                if (len(user1) > 20 or user1 == "") or (len(pass1) > 20 or pass1 == ""):   #Checking if username and password input is valid
                     print("\nLogin data invalid, returning to login or signup screen.")
-                    account1 = -1
+                    account1 = -1   #Value to return to login screen
                     break
-                with open("chessconsoleaccts.dat", "r") as accts:
+                with open("chessconsoleaccts.dat", "r") as accts:   #Scanning file for username and password pair
                     while True:
                         userpass = accts.read(55)
                         if not userpass:
                             break
                         if (user1.ljust(20).strip() == userpass[:20].strip()) and (pass1.ljust(20).strip() == userpass[20:40].strip()):
-                            account1 = 1
+                            account1 = 1   #Updating value to true if account is valid 
                             break
                 if account1 == 0:
                     print("\nLogin data not in database, returning to login or signup screen.")
-                    account1 = -1
+                    account1 = -1    #Value to return to login screen
             if account1 == 1:
-                logcheck1 = 1
+                logcheck1 = 1    #Updating value to true if login is valid
         elif user1ls == "signup":
             account1 = 0
             while account1 == 0:
                 print("\nPlayer 1 (White), input new account details: ")
                 user1 = input("Input New Username (20 chars): ")
-                pass1 = gp.getpass(str("Input New Password (20 chars): "))
-                if (len(user1) > 20 or user1 == "") or (len(pass1) > 20 or pass1 == ""):
+                pass1 = gp.getpass(str("Input New Password (20 chars): "))  #Hiding password input 
+                if (len(user1) > 20 or user1 == "") or (len(pass1) > 20 or pass1 == ""):   #Checking if username and password input is valid
                     print("\nData invalid, returning to login or signup screen.")
-                    account1 = -1
+                    account1 = -1   #Value to return to login screen
                     break
-                with open("chessconsoleaccts.dat", "r") as accts:
+                with open("chessconsoleaccts.dat", "r") as accts:   #Scanning file if username is not in use
                     while True:
                         userpass = accts.read(40)
                         if not userpass:
-                            account1 = 1
+                            account1 = 1   #Updating value to true if account is valid 
                             break
                         if (user1.ljust(20).strip() == userpass[:20].ljust(20).strip()):
                             account1 = 0
@@ -1098,8 +1098,8 @@ def login():
                             break
             if account1 == 1:
                 with open("chessconsoleaccts.dat", "a") as accts:
-                        accts.write(user1.ljust(20)+pass1.ljust(20)+"0".ljust(5)+"0".ljust(5)+"0".ljust(5))
-                logcheck1 = 1
+                        accts.write(user1.ljust(20)+pass1.ljust(20)+"0".ljust(5)+"0".ljust(5)+"0".ljust(5))   #Add username and password pair to database
+                logcheck1 = 1   #Updating value to true if signup is valid
         else:
             print("\nInvalid command. Input again.")
     print("")
@@ -1112,24 +1112,24 @@ def login():
             while account2 == 0:
                 print("\nPlayer 2 (Black), input account details: ")
                 user2 = input("Input Username (20 chars): ")
-                pass2 = gp.getpass(str("Input Password (20 chars): "))
-                if (len(user2) > 20 or user2 == "") or (len(pass2) > 20 or pass2 == "") or (user2.ljust(20).strip() == user1.ljust(20).strip()):
+                pass2 = gp.getpass(str("Input Password (20 chars): ")) #Hiding password input 
+                if (len(user2) > 20 or user2 == "") or (len(pass2) > 20 or pass2 == "") or (user2.ljust(20).strip() == user1.ljust(20).strip()):   #Checking if username and password input is valid, and if second user account is different from first user account
                     print("\nLogin data invalid, returning to login or signup screen.")
-                    account2 = -1
+                    account2 = -1  #Value to return to login screen
                     break
-                with open("chessconsoleaccts.dat", "r") as accts:
+                with open("chessconsoleaccts.dat", "r") as accts:   #Scanning file for username and password pair
                     while True:
                         userpass = accts.read(55)
                         if not userpass:
                             break
                         if (user2.ljust(20).strip() == userpass[:20].strip()) and (pass2.ljust(20).strip() == userpass[20:40].strip()):
-                            account2 = 1
+                            account2 = 1   #Updating value to true if account is valid 
                             break
                 if account2 == 0:
                     print("\nLogin data not in database, returning to login or signup screen.")
-                    account2 = -1
+                    account2 = -1   #Value to return to login screen
             if account2 == 1:
-                logcheck2 = 1
+                logcheck2 = 1   #Updating value to true if login is valid
         elif user2ls == "signup":
             account2 = 0
             while account2 == 0:
@@ -1138,13 +1138,13 @@ def login():
                 pass2 = gp.getpass(str("Input New Password (20 chars): "))
                 if (len(user2) > 20 or user2 == "") or (len(pass2) > 20 or pass2 == ""):
                     print("\nData invalid, returning to login or signup screen.")
-                    account2 = -1
+                    account2 = -1   #Value to return to login screen
                     break
-                with open("chessconsoleaccts.dat", "r") as accts:
+                with open("chessconsoleaccts.dat", "r") as accts:   #Scanning file if username is not in use
                     while True:
                         userpass = accts.read(40)
                         if not userpass:
-                            account2 = 1
+                            account2 = 1   #Updating value to true if account is valid 
                             break
                         if (user2.ljust(20).strip() == userpass[:20].ljust(20).strip()):
                             account2 = 0
@@ -1152,8 +1152,8 @@ def login():
                             break
             if account2 == 1:
                 with open("chessconsoleaccts.dat", "a") as accts:
-                        accts.write(user2.ljust(20)+pass2.ljust(20)+"0".ljust(5)+"0".ljust(5)+"0".ljust(5))
-                logcheck2 = 1
+                        accts.write(user2.ljust(20)+pass2.ljust(20)+"0".ljust(5)+"0".ljust(5)+"0".ljust(5))   #Add username and password pair to database
+                logcheck2 = 1   #Updating value to true if signup is valid
         else:
             print("\nInvalid command. Input again.")
     print("")
@@ -1169,19 +1169,19 @@ def updateleaderboard(p1n, p1w, p1l, p1d, p2n, p2w, p2l, p2d):
             data = accts.read(55)
             if not data:
                 break
-            if (p1n.ljust(20).strip() == data[:20].ljust(20).strip()):
+            if (p1n.ljust(20).strip() == data[:20].ljust(20).strip()):   #Scanning for account of player 1 and updating their win-loss-draw values
                 data = data[:20].ljust(20)+data[20:40].ljust(20)+str(int(data[40:45])+p1w).ljust(5)+str(int(data[45:50])+p1l).ljust(5)+str(int(data[50:55])+p1d).ljust(5)
-            if (p2n.ljust(20).strip() == data[:20].ljust(20).strip()):
+            if (p2n.ljust(20).strip() == data[:20].ljust(20).strip()):   #Scanning for account of player 2 and updating their win-loss-draw values
                 data = data[:20].ljust(20)+data[20:40].ljust(20)+str(int(data[40:45])+p2w).ljust(5)+str(int(data[45:50])+p2l).ljust(5)+str(int(data[50:55])+p2d).ljust(5)
-            unsortedboard[data[:20].ljust(20).strip()] = 1*int(data[40:45]) + 0.5*int(data[50:55])
-            newdata = newdata + data
+            unsortedboard[data[:20].ljust(20).strip()] = 1*int(data[40:45]) + 0.5*int(data[50:55])   #Calculating points: 1 per win, 0.5 per draw, 0 per loss
+            newdata = newdata + data   #Copying entire dataset
     with open("chessconsoleaccts.dat", "w") as accts:
-        accts.write(newdata)
-    leaderboard = dict(sorted(unsortedboard.items(), key=lambda value: -value[1]))
-    leaderboardlist = list(leaderboard.items())
+        accts.write(newdata)   #Replacing dat file with updated values
+    leaderboard = dict(sorted(unsortedboard.items(), key=lambda value: -value[1]))  #Sorting data by value of points, highest to lowest, using a dictionary
+    leaderboardlist = list(leaderboard.items()) #Turning dictionary into a list
     print("\n\n\nLeaderboard: ")
-    for i in range(5):
-        placement = leaderboardlist[i] if i<len(leaderboardlist) else ("---", "---")
+    for i in range(5):   #Fetching top 5 from data
+        placement = leaderboardlist[i] if i<len(leaderboardlist) else ("---", "---")   #Empty bracket replacement if data has less than 5 entries
         print(f"\n{i+1}. {placement[0].ljust(22)}     | Point Rating: {placement[1]}")
     print("\n")
     return
