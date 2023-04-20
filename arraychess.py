@@ -9,8 +9,8 @@ def startchess():
     user1, user2 = login()
     
     startinput = ""
-    startcommands = ["start", "end", "leaderboard"]
-    print("Commands: \n", startcommands)
+    startcommands = ["start","leaderboard","end"]
+    print(f"Menu: \n   1. {startcommands[0].upper()} \n   2. {startcommands[1].upper()} \n   3. {startcommands[2].upper()} \n")
     while True:
         while startinput not in startcommands:
             startinput = input("\nInput Command: ").lower()
@@ -170,7 +170,7 @@ def startchess():
         #Black's move
         if count%2 == 0:
             print(f"\n{user2}'s Turn (Black)")
-            print(board(chesslist,"black"))
+            print(board(chesslist, "black"))
             imove, fmove = " ", " "
             while imove not in notation or fmove not in notation:
                 chesstime = chesstimeb
@@ -187,7 +187,7 @@ def startchess():
                 timerthread.join()
 
                 moves = result.get()
-                chesstimew = remtime.get()
+                chesstimeb = remtime.get()
                 if "," in moves:
                     moves = moves.split(",")
                     moves = tuple([moves[0], moves[1]])
