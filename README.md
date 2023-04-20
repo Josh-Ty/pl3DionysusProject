@@ -17,3 +17,5 @@ Features:
 - Allows moves such as castling, double pawn move, and pawn promotion
 - Does not allow en passant and denying pawn promotion
 
+Demo Vid:
+https://youtu.be/8Vn0MEJqtYw 
