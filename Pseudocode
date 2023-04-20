@@ -1,0 +1,63 @@
+Start
+Declare all variables
+Input Player1_username, Player1_password
+If Player1 is logging in Then
+    	If Player1’s information aligns with an account in the account database Then
+        		Go to Player2 login/signup
+   	Else
+        		Input Player1_username, Player1_password again
+Endif
+Else If Player1 is signing up Then
+If Player1 username does not align with an account in the account database Then
+Go to Player2 login/signup
+    	Else
+        		Input Player1_username, Player1_password again
+    	Endif
+Endif
+Input Player2_username, Player2_password
+If Player2 is logging in Then
+    	If Player2’s information aligns with an account in the account database Then
+        		Go to Menu
+   	Else
+        		Input Player2_username, Player2_password again
+Endif
+Else If Player2 is signing up Then
+If Player2 username does not align with an account in the account database Then
+Go to Menu
+    	Else
+        		Input Player2_username, Player2_password again
+    	Endif
+Endif
+Display list of possible moves
+While game has not ended (A player's time has not reached 0 and both kings are on the board) Do
+Countdown time (initial time of 10 minutes, counts down per second while there is no input, 5 second grace period before start of countdown)
+    	For each player in [Player1, Player2] (Cycles between the two until game ends)
+        	Get move input from player using chess notation (may also draw or resign)
+If draw Then 
+Ask both players if they want to draw 
+            If yes Then 
+                	End game and add draw to player stats 
+            Else 
+                	Continue game 
+            Endif 
+Else If resign Then 
+End game and add loss to resigning player's stats and add win to other player's stats 
+Else 
+            	While move input is not valid Do
+Get move input from player using chess notation (may also draw or resign) until valid
+		Endwhile
+            	Do chess move 
+Endif
+        	Update chessboard with player move inputs 
+        	Update time 
+        	Check if any game end scenarios have been reached 
+        	If yes Then 
+            	End game 
+        	Else 
+            	Continue game 
+        	Endif
+    	Endfor 
+Display current time per player (updates and prints every second) and current chessboard (updates and prints after every move)
+Endwhile 
+Display player stats, winner of chess game, and leaderboard according to account database wins.
+End
