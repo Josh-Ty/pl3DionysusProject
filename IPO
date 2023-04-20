@@ -1,0 +1,32 @@
+Input - 
+Player 1 username & password (login or signup); 
+Player 2 username & password (login or signup); 
+Player 1 move using chess notation (repeat input while game has not ended or if input is invalid);
+Player 2 move using chess notation (repeat input while game has not ended or if input is invalid);
+Draw or Resign offers
+
+Process -
+If Player is logging in and information aligns with an account in the account database, then show stats; 
+If Player is logging in and information does not align with an account in the account database, then ask for input again; 
+If Player is signing up and username does not align with an account in the account database, then show stats; 
+If Player is signing up and username aligns with an account in the account database, then ask for input again; 
+While game has not ended(A Player’s time has not reached 0, both kings on the board):
+{
+Countdown time (initial time of 10 minutes, counts down per second while there is no input, 5 second grace period before start of countdown);
+Ask Player for move input using chess notation (may also draw or resign);
+If draw: Ask both Players if they want to draw, if yes then end game and add draw to their stats, if no then continue game;
+If resign: add loss to resigning Player’s stats and add win to other Player’s stats;
+If move input is not valid: Ask input until move input is valid;
+If move input is valid: do chess move;
+Update chessboard with Player move inputs;
+Update time;
+Check if any game end scenarios have been reached, if yes then end game, if no then continue;
+}(Cycled between the 2 Players)
+
+Output - 
+Player stats;
+List of possible moves;
+Current time per player (updates and prints every second (replacing));
+Current chessboard (updates and prints after every move);
+Winner of chess game;
+Leaderboard according to account database wins;
